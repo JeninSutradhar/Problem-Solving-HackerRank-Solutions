@@ -12,59 +12,36 @@
 char* readline();
 char* ltrim(char*);
 char* rtrim(char*);
-char** split_string(char*);
 
 int parse_int(char*);
 
 /*
- * Complete the 'diagonalDifference' function below.
+ * Complete the 'staircase' function below.
  *
- * STEPS =
- * Read the Input
- * Sum the primary diagonal 
- * Sum the Secondary Diagonal
- * Calculate the ABSOLUTE difference |X - Y| = absd
- * Print the Result
+ * The function accepts INTEGER n as parameter.
  */
 
-int diagonalDifference(int arr_rows, int arr_columns, int** arr) {
-    int primary_diagonal_sum = 0;
-    int secondary_diagonal_sum = 0;
-
-    // A loop to calculate the Sum of diagonal
-    for (int i = 0; i < arr_rows; i++) {
-        primary_diagonal_sum = primary_diagonal_sum + arr[i][i];
-        secondary_diagonal_sum = secondary_diagonal_sum + arr[i][arr_columns - 1 - i];
+void staircase(int n) {
+    for (int i = 1; i <= n; i++) {
+        // Print spaces
+        for (int j = 0; j < n - i; j++) {
+            printf(" ");
+        }
+        // Print #
+        for (int k = 0; k < i; k++) {
+            printf("#");
+        }
+        // Move to the next line
+        printf("\n");
     }
-
-    return abs(primary_diagonal_sum - secondary_diagonal_sum);
 }
+
 
 int main()
 {
-    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
-
     int n = parse_int(ltrim(rtrim(readline())));
 
-    int** arr = malloc(n * sizeof(int*));
-
-    for (int i = 0; i < n; i++) {
-        *(arr + i) = malloc(n * (sizeof(int)));
-
-        char** arr_item_temp = split_string(rtrim(readline()));
-
-        for (int j = 0; j < n; j++) {
-            int arr_item = parse_int(*(arr_item_temp + j));
-
-            *(*(arr + i) + j) = arr_item;
-        }
-    }
-
-    int result = diagonalDifference(n, n, arr);
-
-    fprintf(fptr, "%d\n", result);
-
-    fclose(fptr);
+    staircase(n);
 
     return 0;
 }
@@ -155,27 +132,6 @@ char* rtrim(char* str) {
     *(end + 1) = '\0';
 
     return str;
-}
-
-char** split_string(char* str) {
-    char** splits = NULL;
-    char* token = strtok(str, " ");
-
-    int spaces = 0;
-
-    while (token) {
-        splits = realloc(splits, sizeof(char*) * ++spaces);
-
-        if (!splits) {
-            return splits;
-        }
-
-        splits[spaces - 1] = token;
-
-        token = strtok(NULL, " ");
-    }
-
-    return splits;
 }
 
 int parse_int(char* str) {
