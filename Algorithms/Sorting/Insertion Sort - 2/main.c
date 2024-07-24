@@ -17,39 +17,89 @@ char** split_string(char*);
 int parse_int(char*);
 
 /*
- * Complete the 'insertionSort2' function below.
+ * Complete the 'quickSort' function below.
  *
- * The function accepts following parameters:
- *  1. INTEGER n
- *  2. INTEGER_ARRAY arr
+ * The function is expected to return an INTEGER_ARRAY.
+ * The function accepts INTEGER_ARRAY arr as parameter.
+ */
+/*
+ * To return the integer array from the function, you should:
+ *     - Store the size of the array to be returned in the result_count variable
+ *     - Allocate the array statically or dynamically
+ *
+ * For example,
+ * int* return_integer_array_using_static_allocation(int* result_count) {
+ *     *result_count = 5;
+ *
+ *     static int a[5] = {1, 2, 3, 4, 5};
+ *
+ *     return a;
+ * }
+ *
+ * int* return_integer_array_using_dynamic_allocation(int* result_count) {
+ *     *result_count = 5;
+ *
+ *     int *a = malloc(5 * sizeof(int));
+ *
+ *     for (int i = 0; i < 5; i++) {
+ *         *(a + i) = i + 1;
+ *     }
+ *
+ *     return a;
+ * }
+ *
  */
 
-void insertionSort2(int n, int arr_count, int* arr) {
-    for (int i = 1; i < n; i++) {
-        int value_to_insert = arr[i];
-        int j = i - 1;
-
-        // Move elements of arr[0..i-1] that are greater than value_to_insert
-        // to one position ahead of their current position
-        while (j >= 0 && arr[j] > value_to_insert) {
-            arr[j + 1] = arr[j];
-            j--;
+int* quickSort(int arr_count, int* arr, int* result_count) {
+    int pivot = arr[0];  // Choose the first element as the pivot
+    int left_count = 0, right_count = 0, equal_count = 0;
+    
+    // Allocate maximum possible space for left, right, and equal arrays
+    int* left = (int*)malloc(arr_count * sizeof(int));
+    int* right = (int*)malloc(arr_count * sizeof(int));
+    int* equal = (int*)malloc(arr_count * sizeof(int));
+    
+    // Partition the array
+    for (int i = 0; i < arr_count; i++) {
+        if (arr[i] < pivot) {
+            left[left_count++] = arr[i];
+        } else if (arr[i] > pivot) {
+            right[right_count++] = arr[i];
+        } else {
+            equal[equal_count++] = arr[i];
         }
-        arr[j + 1] = value_to_insert;
-
-        // Print the array after each insertion
-        for (int i = 0; i < n; i++) {
-            printf("%d", arr[i]);
-            if (i < n - 1) {
-                printf(" ");
-            }
-        }
-        printf("\n");
     }
+    
+    // Allocate space for the result array
+    int* result = (int*)malloc(arr_count * sizeof(int));
+    int index = 0;
+    
+    // Combine left, equal, and right arrays
+    for (int i = 0; i < left_count; i++) {
+        result[index++] = left[i];
+    }
+    for (int i = 0; i < equal_count; i++) {
+        result[index++] = equal[i];
+    }
+    for (int i = 0; i < right_count; i++) {
+        result[index++] = right[i];
+    }
+    
+    // Set the result_count to the size of the result array
+    *result_count = arr_count;
+    
+    // Free allocated memory for left, right, and equal arrays
+    free(left);
+    free(right);
+    free(equal);
+    
+    return result;
 }
 
 int main()
 {
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
     int n = parse_int(ltrim(rtrim(readline())));
 
     char** arr_temp = split_string(rtrim(readline()));
@@ -62,7 +112,20 @@ int main()
         *(arr + i) = arr_item;
     }
 
-    insertionSort2(n, n, arr);
+    int result_count;
+    int* result = quickSort(n, arr, &result_count);
+
+    for (int i = 0; i < result_count; i++) {
+        fprintf(fptr, "%d", *(result + i));
+
+        if (i != result_count - 1) {
+            fprintf(fptr, " ");
+        }
+    }
+
+    fprintf(fptr, "\n");
+
+    fclose(fptr);
 
     return 0;
 }
